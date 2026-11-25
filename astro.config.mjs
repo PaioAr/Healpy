@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 // con tu usuario de GitHub y el nombre EXACTO del repositorio (ej: 'valentina' y 'divercity').
 // Si los dejás vacíos, se toman solos de GitHub Actions.
 const USUARIO = 'PaioAr';
-const REPO = 'https://github.com/PaioAr/Healpy';
+const REPO = 'Healpy';
 
 const [o, r] = (process.env.GITHUB_REPOSITORY ?? '').split('/');
 const owner = USUARIO || o;
