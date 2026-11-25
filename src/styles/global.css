@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0b2a55;
+  --color-gold: #d58a14;
+  --color-gold-dark: #a2640b;
+  --color-cream: #fbf8f3;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body { @apply bg-white text-neutral-900 font-sans antialiased; }
+:focus-visible { outline: 3px solid var(--color-gold); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Estilos de la nota */
+.art h2 { @apply mb-3 mt-12 text-2xl font-extrabold leading-tight text-navy sm:text-3xl; }
+.art h3 { @apply mb-1 mt-7 text-lg font-bold text-navy; }
+.art p { @apply my-4 text-[1.2rem] leading-[1.65]; }
+.art ul, .art ol { @apply my-4 space-y-2 pl-6 text-[1.2rem] leading-[1.6] marker:text-gold; }
+.art ul { @apply list-disc; }
+.art ol { @apply list-decimal; }
+.art mark { background: #f8eab0; padding: 0 .2em; }
+.art blockquote { @apply my-10 border-l-4 border-gold pl-5 text-2xl font-bold leading-snug text-navy; }
+.art figure { @apply my-8; }
+.art figcaption { @apply mt-2 text-sm text-neutral-600; }

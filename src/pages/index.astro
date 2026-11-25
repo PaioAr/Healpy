@@ -1,0 +1,476 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { asset } from '../lib/url.js';
+
+const I = {
+  rampa: 'M3 19h18M3 19L15 9v10', baldosa: 'M4 4h16v16H4zM9.5 4v16M14.5 4v16M4 9.5h16M4 14.5h16',
+  baranda: 'M3 8h18M5 8v11M12 8v11M19 8v11M3 13h18', senal: 'M5 3h14v8H5zM12 11v10M9 21h6',
+  ascensor: 'M5 3h14v18H5zM9 10l3-3 3 3M9 14l3 3 3-3', escalera: 'M3 20h6v-5h6v-5h6V5',
+  gente: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2 21a7 7 0 0 1 14 0M17 4.5a3.5 3.5 0 0 1 0 6.5M19 14a6 6 0 0 1 3 7',
+  corazon: 'M12 21C5 16 3 12 3 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 2.5C21 12 19 16 12 21z',
+  caja: 'M4 8h16v4H4zM6 12v9h12v-9M12 8v13M12 8C10 8 8 7 8 5s3-2 4 3zM12 8c2 0 4-1 4-3s-3-2-4 3z',
+  compartir: 'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',
+};
+// Poné true para volver a mostrar el presupuesto (sección, menú) en la página.
+const MOSTRAR_PRESUPUESTO = false;
+const ars = (n) => '$' + n.toLocaleString('es-AR');
+const soluciones = [
+  ['Rampas de acceso', 'Rampas de hormigón con la pendiente que pide la ley, en las esquinas, las paradas de colectivo y los cruces.', 'rampa', 'md:col-span-2'],
+  ['Baldosas podotáctiles', 'Antideslizantes y podotáctiles: sirven de guía para quien no ve bien y evitan resbalones.', 'baldosa', ''],
+  ['Barandas de apoyo', 'Para agarrarse en los tramos con desnivel, pensando sobre todo en los adultos mayores.', 'baranda', ''],
+  ['Señalización accesible', 'Carteles claros y pintura reflectiva para que los conductores sepan que ahí cruzan personas.', 'senal', ''],
+  ['Escaleras mecánicas y plataformas', 'En el paso bajo nivel sumamos escaleras mecánicas de baja pendiente y plataformas para sillas de ruedas, así se cruzan las vías sin ayuda.', 'escalera', 'md:col-span-2'],
+];
+const actividades = [
+  ['Armamos el grupo', 'Nos juntamos entre compañeros para mejorar los recorridos que hace la gente a pie por el barrio.'],
+  ['Recorrimos la zona', 'Caminamos Leandro N. Alem y Valentín Vergara anotando el estado de las veredas, dónde faltaban rampas y qué cruces eran más peligrosos.'],
+  ['Hablamos con los vecinos', 'Hicimos encuestas y charlas con gente que pasa por ahí. Casi todos nombraron la falta de rampas y las baldosas rotas.'],
+  ['Pedimos permiso al municipio', 'Redactamos la solicitud al Municipio de Lomas de Zamora (Obras Públicas y Planeamiento Urbano) y pedimos financiamiento.'],
+  ['Conseguimos los materiales', 'Cemento, baldosas antideslizantes y podotáctiles, pintura vial, barandas y carteles.'],
+  ['Preparamos la obra', 'Pusimos señalización preventiva en las esquinas de la estación y picamos los cordones y veredas rotas.'],
+  ['Rampas y baldosas', 'Hicimos las rampas con la pendiente reglamentaria y pusimos baldosas antideslizantes en accesos, paradas y cruces.'],
+  ['Barandas', 'Instalamos barandas de apoyo donde hay desnivel y en los accesos peatonales.'],
+  ['Paso bajo nivel', 'Sumamos escaleras mecánicas de baja pendiente y plataformas para sillas de ruedas.'],
+  ['Qué señales hacían falta', 'Definimos los carteles, la pintura reflectiva y las barandas de seguridad para la zona de la estación.'],
+  ['Carteles y pintura', 'Pusimos los carteles donde se lean bien y pintamos rampas y sendas con colores de alta visibilidad.'],
+  ['Revisión final', 'Antes de abrir el paso al público controlamos que las rampas estén firmes, que la pendiente sea la correcta, que las baldosas estén parejas y que los carteles se vean.'],
+  ['Antes y después', 'Comparamos encuestas y datos de circulación en la estación para ver si mejoró la movilidad y la seguridad de los vecinos.'],
+];
+const rubros = [['Materiales de construcción', 'Cemento, arena, piedra y baldosas antideslizantes', 2500000], ['Señalización y barandas', 'Señalización vial, barandas metálicas y pintura vial', 1800000], ['Mano de obra especializada', 'Equipo de obra', 2000000]];
+const total = rubros.reduce((a, r) => a + r[2], 0);
+const stats = [[ars(total), 'presupuesto estimado'], ['8', 'carteles de señalización'], ['4', 'barandas de seguridad'], ['3', 'normas que lo respaldan']];
+const sumate = [
+  ['Unite', 'gente', 'Podés venir a relevar esquinas, hacer encuestas con los vecinos o acompañar la obra.'],
+  ['Donar', 'corazon', 'Cualquier monto ayuda a juntar materiales y señalización.'],
+  ['Aportá', 'caja', 'Si tenés materiales, herramientas, un oficio o una idea para mejorar la propuesta, contanos.'],
+  ['Difundí', 'compartir', 'Compartí la página con quien conozcas. Cuanta más gente la vea, más barrios se pueden animar a hacer lo mismo.'],
+];
+const nav = [['Divercity', '#propuesta'], ['Proyecto', '#proceso'], ...(MOSTRAR_PRESUPUESTO ? [['Presupuesto', '#presupuesto']] : []), ['Sumate', '#sumate'], ['Nosotros', '#nosotros']];
+---
+<Layout title="Healpy S.A. | Proyecto Divercity">
+  <div class="fondo" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+
+  <header class="fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-4">
+    <nav class="glass mx-auto flex w-full max-w-5xl items-center justify-between gap-2 rounded-full py-1.5 pl-3 pr-2 sm:py-2" aria-label="Principal">
+      <a href="#inicio" class="flex items-center gap-2 pr-1 text-base font-bold tracking-tight sm:pr-2 sm:text-lg">
+        <img src={asset('/img/logo-healpy-claro.png')} alt="" class="h-8 w-auto sm:h-9" />Healpy
+      </a>
+
+      <!-- Navegación Desktop -->
+      <div class="ml-auto hidden items-center gap-1 text-sm font-medium text-white/80 lg:flex">
+        {nav.map(([t, h]) => <a href={h} class="rounded-full px-4 py-2 transition hover:bg-white/10 hover:text-white">{t}</a>)}
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <a href="#sumate" class="rounded-full bg-white px-4 py-2 text-xs font-semibold text-black transition hover:bg-white/90 sm:px-5 sm:text-sm">Sumate</a>
+        <!-- Botón menú móvil -->
+        <button id="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menú" class="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20 lg:hidden">
+          <svg id="icon-open" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+          <svg id="icon-close" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Desplegable Móvil -->
+    <div id="mobile-menu" class="glass mx-auto mt-2 hidden max-w-5xl flex-col gap-1 rounded-3xl p-3 text-sm font-medium text-white/90 lg:hidden">
+      {nav.map(([t, h]) => (
+        <a href={h} class="mobile-link rounded-2xl px-4 py-3 transition hover:bg-white/10">{t}</a>
+      ))}
+    </div>
+  </header>
+
+  <main id="inicio" class="relative mx-auto max-w-6xl px-4 sm:px-6">
+    <!-- HERO -->
+    <section class="grid items-center gap-10 pb-14 pt-28 sm:gap-12 sm:pb-20 sm:pt-32 lg:min-h-[100svh] lg:grid-cols-[1.05fr_1fr] lg:pt-28">
+      <div>
+        <p class="eyebrow">Healpy S.A. presenta</p>
+        <h1 class="mt-3 text-[2.35rem] font-bold leading-[1.05] tracking-[-0.03em] sm:mt-4 sm:text-6xl xl:text-7xl">
+          Una ciudad accesible comienza con un camino <span class="dorado">para todos</span>
+        </h1>
+        <p class="mt-5 max-w-xl text-base leading-relaxed text-white/75 sm:mt-6 sm:text-xl">
+          Somos un grupo de 6.º año del Güiraldes. Divercity es la propuesta que armamos para que la Estación de Banfield sea más fácil de usar para adultos mayores y personas en silla de ruedas o con movilidad reducida.
+        </p>
+        <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-2.5 text-xs text-white/80 sm:mt-7 sm:gap-x-6 sm:text-sm">
+          {[['rampa', 'Rampas y baldosas'], ['ascensor', 'Ascensores y escaleras'], ['senal', 'Señalización clara']].map(([k, t]) => (
+            <li class="flex items-center gap-2">
+              <svg class="h-4 w-4 shrink-0 text-amber-300 sm:h-5 sm:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={I[k]} /></svg>
+              {t}
+            </li>
+          ))}
+        </ul>
+        <div class="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+          <a href="#propuesta" class="w-full rounded-full bg-gradient-to-b from-amber-300 to-amber-500 px-8 py-3.5 text-center font-semibold text-black shadow-[0_12px_40px_-12px_rgba(213,138,20,.9)] transition hover:scale-[1.03] sm:w-auto sm:py-4">Conocer Divercity</a>
+          <a href="#sumate" class="glass w-full rounded-full px-7 py-3.5 text-center font-semibold transition hover:bg-white/15 sm:w-auto sm:py-4">Sumate o donar ♥</a>
+        </div>
+        <p class="mt-5 flex items-center gap-2 text-xs text-white/60 sm:text-sm">
+          <svg class="h-4 w-4 shrink-0 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+          Nos basamos en las leyes 22.431 y 24.314
+        </p>
+      </div>
+
+      <!-- Composición adaptable: apilada en móvil, collage flotante desde sm -->
+      <div class="relative mx-auto w-full max-w-xl sm:h-[32rem] lg:max-w-none" aria-label="Resumen del proyecto">
+        <div class="absolute -right-6 top-8 h-60 w-60 rounded-full bg-gradient-to-br from-amber-400/30 to-transparent blur-2xl sm:h-72 sm:w-72" aria-hidden="true"></div>
+
+        <!-- Imagen principal -->
+        <div class="relative h-60 w-full overflow-hidden rounded-[1.8rem] shadow-[0_30px_70px_-25px_rgba(0,0,0,.9)] ring-1 ring-white/20 sm:absolute sm:right-0 sm:top-0 sm:h-[64%] sm:w-[88%] sm:rounded-[2.2rem]">
+          <img src={asset('/img/portada.jpg')} alt="Vista de la Estación de Banfield, con el puente peatonal y las vías" class="h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+        </div>
+
+        <!-- Badges emojis (solo visibles desde sm para no tapar la foto en celu) -->
+        <span class="glass flota hidden sm:absolute sm:left-[4%] sm:top-[10%] sm:grid sm:h-14 sm:w-14 sm:place-items-center sm:rounded-full sm:text-3xl" aria-hidden="true">♿️</span>
+        <span class="glass flota hidden sm:absolute sm:right-[-1%] sm:top-[44%] sm:grid sm:h-14 sm:w-14 sm:place-items-center sm:rounded-full sm:text-3xl" style="animation-delay:-2s" aria-hidden="true">🚧</span>
+        <span class="glass flota hidden sm:absolute sm:right-[8%] sm:top-[-4%] sm:grid sm:h-12 sm:w-12 sm:place-items-center sm:rounded-full sm:text-2xl" style="animation-delay:-4s" aria-hidden="true">🚆</span>
+
+        <!-- Tarjetas inferiores: Grid 2 cols en celu, absolutas en sm+ -->
+        <div class="mt-3 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:mt-0 sm:block">
+          <div class="glass sm:flota rounded-[1.5rem] p-4 sm:absolute sm:bottom-[7%] sm:left-0 sm:w-[60%] sm:max-w-[17.5rem] sm:rounded-[1.6rem]">
+            <p class="text-xs text-white/60">Proyecto Divercity</p>
+            <p class="dorado text-2xl font-bold tracking-tight sm:text-3xl">13 <span class="text-sm font-semibold sm:text-base">actividades</span></p>
+            <div class="mt-2.5 flex gap-1 sm:mt-3" aria-hidden="true">{Array.from({ length: 13 }).map(() => <span class="h-1.5 flex-1 rounded-full bg-gradient-to-r from-amber-300 to-amber-600"></span>)}</div>
+            <ul class="mt-2.5 space-y-1 text-xs text-white/75 sm:mt-3 sm:text-[12px]">
+              <li>Diagnóstico del entorno</li>
+              <li>Implementación de soluciones</li>
+              <li>Una ciudad más inclusiva</li>
+            </ul>
+          </div>
+
+          <div class="glass sm:flota rounded-[1.5rem] p-4 sm:absolute sm:bottom-0 sm:right-[2%] sm:w-[54%] sm:max-w-[15.5rem] sm:rounded-[1.6rem]" style="animation-delay:-3.5s">
+            <p class="text-xs font-semibold text-white/80">Qué incluye</p>
+            <ul class="mt-2.5 space-y-1.5 text-xs sm:mt-3 sm:space-y-2 sm:text-[13px]">
+              {['Rampas de acceso', 'Baldosas podotáctiles', 'Barandas de apoyo', 'Escaleras mecánicas'].map((t) => (
+                <li class="flex items-center gap-2">
+                  <span class="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-amber-400 text-black">
+                    <svg class="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EL PROBLEMA -->
+    <section id="problema" class="rv py-14 text-center sm:py-20">
+      <p class="eyebrow">El problema</p>
+      <h2 class="mx-auto mt-2.5 max-w-3xl text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">Lo que pasa hoy en la estación</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:mt-6 sm:text-lg">
+        Todos los días pasan por la zona de la estación personas en silla de ruedas, adultos mayores y gente con discapacidad visual o movilidad reducida. Se encuentran con veredas rotas, cordones sin rampa y muy poca señalización, y moverse así es incómodo y además peligroso.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-2.5 text-xs font-medium sm:mt-8 sm:gap-3 sm:text-sm">
+        {['Falta de rampas en las esquinas', 'Veredas deterioradas', 'Ausencia de señalización adecuada'].map((t) => (
+          <span class="glass rounded-full px-4 py-2 sm:px-5 sm:py-2.5">{t}</span>
+        ))}
+      </div>
+      <div class="rv mt-10 grid gap-4 text-left sm:mt-12 sm:grid-cols-2">
+        <figure class="glass rounded-[1.6rem] p-2 sm:rounded-[1.8rem]">
+          <img src={asset('/img/estacion-tren.jpg')} alt="Tren llegando al andén de la Estación de Banfield" class="h-52 w-full rounded-[1.2rem] object-cover sm:h-64 sm:rounded-[1.4rem]" />
+          <figcaption class="px-3 pb-2 pt-3 text-sm leading-relaxed text-white/65">
+            <strong class="text-white/95">Banfield, todos los días.</strong> Por acá pasa gente que va a trabajar, a estudiar o a hacer trámites, y no todos pueden subir al tren o cambiar de andén con la misma facilidad.
+          </figcaption>
+        </figure>
+        <figure class="glass rounded-[1.6rem] p-2 sm:rounded-[1.8rem]">
+          <img src={asset('/img/anden.jpg')} alt="Andén de la estación con la franja amarilla de seguridad en el borde" class="h-52 w-full rounded-[1.2rem] object-cover sm:h-64 sm:rounded-[1.4rem]" />
+          <figcaption class="px-3 pb-2 pt-3 text-sm leading-relaxed text-white/65">
+            <strong class="text-white/95">El borde del andén.</strong> La franja amarilla ayuda a orientarse, pero hace falta más: rampas, barandas y carteles claros para moverse con seguridad.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- PROPUESTA -->
+    <section id="propuesta" class="py-12 sm:py-16">
+      <div class="rv text-center">
+        <p class="eyebrow">Divercity</p>
+        <h2 class="mt-2.5 text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">Transformar el espacio público <span class="dorado">es posible</span></h2>
+        <p class="mx-auto mt-4 max-w-2xl text-base text-white/75 sm:mt-5 sm:text-lg">
+          La idea es que cualquiera pueda llegar y moverse por la estación sin depender de otra persona: menos accidentes, más independencia y el derecho a circular con seguridad.
+        </p>
+      </div>
+      <div class="mt-9 grid gap-3.5 sm:mt-12 sm:gap-4 md:grid-cols-4">
+        {soluciones.map(([t, d, k, span]) => (
+          <article class={`glass rv rounded-[1.6rem] p-5 sm:rounded-[2rem] sm:p-7 ${span}`}>
+            <span class="glass grid h-11 w-11 place-items-center rounded-2xl sm:h-12 sm:w-12">
+              <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d={I[k]} /></svg>
+            </span>
+            <h3 class="mt-4 text-lg font-semibold tracking-tight sm:mt-5 sm:text-xl">{t}</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-white/70 sm:mt-2 sm:text-base">{d}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- PROCESO -->
+    <section id="proceso" class="py-14 sm:py-20">
+      <div class="rv text-center">
+        <p class="eyebrow">Cómo lo hicimos</p>
+        <h2 class="mt-2.5 text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">Lo que hicimos, paso a paso</h2>
+      </div>
+      <ol class="mt-9 grid gap-3.5 sm:mt-12 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        {actividades.map(([t, d], i) => (
+          <li class="glass rv rounded-[1.5rem] p-5 sm:rounded-[1.7rem] sm:p-6">
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-amber-300 to-amber-600 text-xs font-bold text-black sm:h-9 sm:w-9 sm:text-sm">{i + 1}</span>
+            <h3 class="mt-3.5 font-semibold sm:mt-4">{t}</h3>
+            <p class="mt-1 text-sm leading-relaxed text-white/70">{d}</p>
+          </li>
+        ))}
+      </ol>
+      <figure class="glass rv mx-auto mt-10 max-w-4xl rounded-[1.6rem] p-2.5 sm:mt-14 sm:rounded-[2.2rem] sm:p-3">
+        <img src={asset('/img/antes-despues.png')} alt="Paso bajo nivel de la estación, antes y después de la intervención" class="w-full rounded-[1.2rem] sm:rounded-[1.7rem]" />
+        <figcaption class="px-3 pb-1.5 pt-2.5 text-center text-xs text-white/60 sm:px-4 sm:pb-2 sm:pt-3 sm:text-sm">Paso bajo nivel de la Estación de Banfield: antes y después.</figcaption>
+      </figure>
+    </section>
+
+    {MOSTRAR_PRESUPUESTO && (
+    <section id="presupuesto" class="py-12 sm:py-16">
+      <div class="rv text-center"><p class="eyebrow">Presupuesto</p><h2 class="mt-2.5 text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">Cuánto cuesta una ciudad accesible</h2></div>
+      <div class="rv mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 md:grid-cols-4">
+        {stats.map(([n, l]) => <div class="glass rounded-[1.4rem] p-4 text-center sm:rounded-[1.6rem] sm:p-6"><p class="dorado text-2xl font-bold tracking-tight sm:text-4xl">{n}</p><p class="mt-1 text-xs text-white/65 sm:text-sm">{l}</p></div>)}
+      </div>
+      <div class="glass rv mt-4 rounded-[1.6rem] p-5 sm:rounded-[2rem] sm:p-9">
+        <p class="text-sm text-white/75 sm:text-base">Solicitud al Municipio de Lomas de Zamora (Obras Públicas y Planeamiento Urbano):</p>
+        <div class="mt-6 space-y-5 sm:space-y-6">
+          {rubros.map(([r, d, m]) => (
+            <div>
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <p class="font-semibold">{r}</p>
+                <p class="font-semibold tabular-nums text-amber-300 sm:text-white">{ars(m)}</p>
+              </div>
+              <p class="text-xs text-white/60 sm:text-sm">{d}</p>
+              <div class="mt-2 h-2 overflow-hidden rounded-full bg-white/10"><div class="h-full rounded-full bg-gradient-to-r from-amber-300 to-amber-600" style={`width:${Math.round((m / total) * 100)}%`}></div></div>
+            </div>
+          ))}
+        </div>
+        <p class="mt-6 border-t border-white/10 pt-4 text-xs text-white/60 sm:mt-7 sm:pt-5 sm:text-sm">Señales y seguridad: carteles (8 × $50.000 = $400.000), pintura vial reflectiva ($600.000) y barandas (4 × $200.000 = $800.000).</p>
+      </div>
+    </section>
+    )}
+
+    <!-- MARCO LEGAL Y ANTECEDENTES -->
+    <section id="legal" class="py-12 sm:py-16">
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="glass rv rounded-[1.6rem] p-6 sm:rounded-[2rem] sm:p-9">
+          <h3 class="text-xl font-semibold tracking-tight sm:text-2xl">Marco legal</h3>
+          <ul class="mt-4 space-y-3 text-sm text-white/75 sm:text-base">
+            <li><strong class="text-white">Ley 22.431:</strong> sistema de protección integral de las personas con discapacidad.</li>
+            <li><strong class="text-white">Ley 24.314:</strong> accesibilidad al medio físico; exige suprimir barreras en veredas, rampas y espacios públicos.</li>
+            <li><strong class="text-white">Decreto 914/97:</strong> reglamenta los aspectos técnicos de la accesibilidad urbana.</li>
+          </ul>
+          <p class="mt-4 text-xs text-white/60 sm:text-sm">Para hacer la obra pedimos autorización a Obras Públicas y Planeamiento Urbano del Municipio.</p>
+        </div>
+        <div class="glass rv rounded-[1.6rem] p-6 sm:rounded-[2rem] sm:p-9">
+          <h3 class="text-xl font-semibold tracking-tight sm:text-2xl">Antecedentes</h3>
+          <p class="mt-4 text-sm leading-relaxed text-white/75 sm:text-base">Antes de armar el proyecto hablamos con vecinos, adultos mayores y gente con movilidad reducida. Nos contaron lo difícil y riesgoso que es cruzar la calle o caminar por veredas sin rampas.</p>
+          <p class="mt-3 text-sm leading-relaxed text-white/75 sm:text-base">También miramos qué se hizo en otros lugares. En Buenos Aires, Córdoba y Rosario hay planes de accesibilidad con rampas en las esquinas y senderos seguros, y mejoraron la movilidad y la seguridad de personas con discapacidad y adultos mayores.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMATE -->
+    <section id="sumate" class="py-14 sm:py-20">
+      <div class="rv text-center">
+        <p class="eyebrow">Sumate</p>
+        <h2 class="mx-auto mt-2.5 max-w-3xl text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">Cómo podés ayudar</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-base text-white/75 sm:mt-5 sm:text-lg">No hace falta plata para dar una mano. Elegí la forma que te quede cómoda.</p>
+      </div>
+      <div class="mt-9 grid gap-3.5 sm:mt-12 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        {sumate.map(([t, k, d]) => (
+          <article class="glass rv rounded-[1.6rem] p-5 sm:rounded-[2rem] sm:p-7">
+            <span class="glass grid h-11 w-11 place-items-center rounded-2xl text-amber-300 sm:h-12 sm:w-12">
+              <svg class="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d={I[k]} /></svg>
+            </span>
+            <h3 class="mt-4 text-lg font-semibold sm:mt-5 sm:text-xl">{t}</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-white/70 sm:mt-2">{d}</p>
+          </article>
+        ))}
+      </div>
+
+      <div id="donar" class="glass rv mt-5 rounded-[1.7rem] p-5 sm:mt-6 sm:rounded-[2.2rem] sm:p-10">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-xl font-semibold tracking-tight sm:text-2xl">Donar</h3>
+          <span class="rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Simulación</span>
+        </div>
+        <p class="mt-2 text-sm text-white/75 sm:text-base">Elegí un monto para ver cómo funcionaría. Es una simulación: no se cobra nada.</p>
+        <div class="mt-5 grid grid-cols-2 gap-2.5 sm:mt-6 sm:grid-cols-4 sm:gap-3">
+          {[1000, 5000, 10000, 20000].map((m) => (
+            <button type="button" data-monto={m} aria-pressed="false" class="monto glass rounded-[1.1rem] py-3.5 text-lg font-bold tracking-tight transition hover:bg-white/15 sm:rounded-[1.3rem] sm:py-4 sm:text-xl">{ars(m)}</button>
+          ))}
+        </div>
+        <div class="mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+          <button id="donar-btn" type="button" class="rounded-full bg-gradient-to-b from-amber-300 to-amber-500 px-8 py-3.5 font-semibold text-black transition hover:scale-[1.03]">Donar ♥</button>
+          <p id="donar-estado" class="text-center text-sm text-amber-300 sm:text-left" role="status"></p>
+        </div>
+      </div>
+
+      <div id="contacto" class="glass rv mt-4 grid gap-6 rounded-[1.7rem] p-5 sm:gap-8 sm:rounded-[2.2rem] sm:p-10 lg:grid-cols-[1fr_1.1fr]">
+        <div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h3 class="text-xl font-semibold tracking-tight sm:text-2xl">Quiero sumarme</h3>
+            <span class="rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">Simulación</span>
+          </div>
+          <p class="mt-2 text-sm text-white/75 sm:text-base">Completá el formulario y contanos cómo querés ayudar. Es una simulación para el proyecto del colegio, así que no se envía ni se guarda nada.</p>
+        </div>
+        <form id="form" class="space-y-3">
+          <input name="nombre" required placeholder="Tu nombre" class="campo" />
+          <input name="contacto" required placeholder="Tu teléfono o email" class="campo" />
+          <select name="interes" class="campo">{['Quiero ser voluntario/a', 'Quiero donar', 'Quiero aportar materiales o mano de obra', 'Quiero difundir el proyecto', 'Tengo una idea'].map((o) => <option class="text-black">{o}</option>)}</select>
+          <textarea name="mensaje" rows="3" placeholder="Mensaje (opcional)" class="campo"></textarea>
+          <button class="w-full rounded-full bg-white px-6 py-3.5 font-semibold text-black transition hover:bg-white/90">Enviar</button>
+          <p id="estado" class="min-h-5 text-sm text-amber-300" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- NOSOTROS -->
+    <section id="nosotros" class="py-12 sm:py-16">
+      <div class="rv text-center">
+        <img src={asset('/img/logo-healpy-claro.png')} alt="Logo de Healpy S.A." class="mx-auto mb-4 h-16 w-auto sm:mb-5 sm:h-20" />
+        <p class="eyebrow">Nosotros</p>
+        <h2 class="mx-auto mt-2.5 max-w-3xl text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">Healpy S.A.</h2>
+        <p class="mx-auto mt-4 max-w-2xl text-base text-white/75 sm:mt-5 sm:text-lg">Somos estudiantes de 6.º año de Economía y Administración del Instituto Ricardo Güiraldes. Armamos Healpy S.A. y el proyecto Divercity para la materia Proyectos Organizacionales.</p>
+      </div>
+      <div class="mt-9 grid gap-3.5 sm:mt-12 sm:gap-4 md:grid-cols-3">
+        {[['Misión', 'Ayudar a que las personas con discapacidad o movilidad reducida puedan moverse por la calle con seguridad y por su cuenta, adaptando veredas, haciendo rampas y poniendo señalización accesible.'], ['Visión', 'Que el espacio público sea seguro y transitable para todos, sin excepción. Ojalá el proyecto llegue a más zonas del municipio y de otros, y sirva para que más gente piense en la accesibilidad.'], ['Cultura', 'Nos importan la empatía, la inclusión, la responsabilidad social y el trabajo en equipo. Cooperamos, hablamos mucho entre nosotros y pensamos en la igualdad de derechos de todas las personas.']].map(([t, d]) => (
+          <article class="glass rv rounded-[1.6rem] p-6 sm:rounded-[2rem] sm:p-7"><h3 class="dorado text-lg font-semibold sm:text-xl">{t}</h3><p class="mt-2 text-sm leading-relaxed text-white/75">{d}</p></article>
+        ))}
+      </div>
+      <div class="glass rv mt-4 flex flex-col items-start justify-between gap-5 rounded-[1.6rem] p-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6 sm:rounded-[2rem] sm:p-9">
+        <div><p class="text-xs text-white/55 sm:text-sm">Equipo</p><p class="text-lg font-semibold sm:text-xl">Valentina Díaz · Brandon Coronel</p></div>
+        <div><p class="text-xs text-white/55 sm:text-sm">Profesora</p><p class="text-lg font-semibold sm:text-xl">Stella Maris López</p></div>
+        <img src={asset('/img/logo-blanco.png')} alt="Divercity - Accesibilidad para todos" class="h-12 w-auto sm:h-14" />
+      </div>
+    </section>
+  </main>
+
+  <footer class="relative px-4 py-8 text-center text-xs text-white/50 sm:py-10 sm:text-sm">
+    <p>Healpy S.A. · Proyecto Divercity · Instituto Ricardo Güiraldes · Noviembre 2026</p>
+    <p class="mx-auto mt-1.5 max-w-2xl">Fuentes: Ley 22.431 (InfoLEG), Ley 24.314 y Decreto 914/97. Los logos de Divercity y de Healpy y la foto de portada se hicieron con ayuda de inteligencia artificial.</p>
+  </footer>
+
+  <script>
+    document.documentElement.classList.add('js');
+
+    // Menú móvil
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('icon-open');
+    const iconClose = document.getElementById('icon-close');
+
+    const toggleMenu = (forceClose = false) => {
+      const isOpen = forceClose ? false : mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden', !isOpen);
+      mobileMenu.classList.toggle('flex', isOpen);
+      iconOpen.classList.toggle('hidden', isOpen);
+      iconClose.classList.toggle('hidden', !isOpen);
+      menuBtn.setAttribute('aria-expanded', String(isOpen));
+    };
+
+    menuBtn?.addEventListener('click', () => toggleMenu());
+    document.querySelectorAll('.mobile-link').forEach((link) => {
+      link.addEventListener('click', () => toggleMenu(true));
+    });
+
+    // Animaciones de aparición
+    const els = document.querySelectorAll('.rv');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) els.forEach((e) => e.classList.add('in'));
+    else { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 }); els.forEach((e) => io.observe(e)); }
+
+    // Donación simulada
+    let elegido = 0;
+    const montos = document.querySelectorAll('.monto'), dEst = document.getElementById('donar-estado');
+    const fmt = (n) => '$' + n.toLocaleString('es-AR');
+    montos.forEach((b) => b.addEventListener('click', () => {
+      elegido = +b.dataset.monto; dEst.textContent = '';
+      montos.forEach((x) => {
+        const on = x === b;
+        x.setAttribute('aria-pressed', on);
+        x.classList.toggle('activo', on);
+      });
+    }));
+    document.getElementById('donar-btn').addEventListener('click', () => {
+      dEst.textContent = elegido ? `¡Gracias! Tu aporte de ${fmt(elegido)} quedó simulado, no se cobró nada.` : 'Elegí un monto primero.';
+    });
+
+    // Formulario simulado
+    const f = document.getElementById('form'), st = document.getElementById('estado');
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(f));
+      st.textContent = `¡Gracias, ${d.nombre}! Tu mensaje (${d.interes.toLowerCase()}) quedó simulado, no se guardó ni se envió nada.`;
+      f.reset();
+    });
+  </script>
+</Layout>
+
+<style is:global>
+  @property --angulo {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  html { color-scheme: dark; overflow-x: clip; }
+  body { background: #07080c; color: #f5f5f7; font-family: -apple-system, "SF Pro Display", "Inter", system-ui, sans-serif; overflow-x: clip; }
+  .glass {
+    background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.04) 55%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(26px) saturate(180%); backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 -1px 0 rgba(255,255,255,.06), 0 24px 60px -24px rgba(0,0,0,.75);
+  }
+  .dorado { background: linear-gradient(120deg, #ffd27a, #d58a14 70%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .eyebrow { font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #f0b24a; }
+  @media (min-width: 640px) { .eyebrow { font-size: .8rem; } }
+  .fondo { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .fondo i { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .55; animation: deriva 22s ease-in-out infinite alternate; }
+  .b1 { width: 26rem; height: 26rem; left: -10rem; top: -6rem; background: #1b4f9c; }
+  .b2 { width: 22rem; height: 22rem; right: -8rem; top: 30%; background: #b9730f; opacity: .35; animation-delay: -8s; }
+  .b3 { width: 22rem; height: 22rem; left: 15%; bottom: -10rem; background: #0e6b78; opacity: .4; animation-delay: -14s; }
+  @media (min-width: 640px) {
+    .b1 { width: 42rem; height: 42rem; left: -12rem; top: -8rem; }
+    .b2 { width: 36rem; height: 36rem; right: -10rem; }
+    .b3 { width: 34rem; height: 34rem; left: 25%; bottom: -14rem; }
+  }
+  main, footer { position: relative; z-index: 1; }
+  header { position: fixed; z-index: 50; }
+  .campo { width: 100%; border-radius: 1.1rem; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); padding: .85rem 1.1rem; font-size: 1rem; color: #fff; outline: none; }
+  .campo::placeholder { color: rgba(255,255,255,.45); }
+  .campo:focus { border-color: #f0b24a; background: rgba(255,255,255,.1); }
+
+  /* Borde animado en botones de donación */
+  .monto { position: relative; }
+  .monto.activo { background: rgba(255, 255, 255, 0.14); }
+  .monto.activo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2.5px;
+    background: conic-gradient(
+      from var(--angulo),
+      #1b4f9c,
+      #0e6b78,
+      #ffd27a,
+      #d58a14,
+      #1b4f9c
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    animation: girar-borde 3s linear infinite;
+  }
+
+  .flota { animation: flota 6s ease-in-out infinite; }
+  .js .rv { opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+  .js .rv.in { opacity: 1; transform: none; }
+  @keyframes girar-borde { to { --angulo: 360deg; } }
+  @keyframes flota { 50% { transform: translateY(-10px); } }
+  @keyframes deriva { to { transform: translate(60px, 40px) scale(1.12); } }
+  @media (prefers-reduced-motion: reduce) {
+    .flota, .fondo i, .monto.activo::before { animation: none; }
+    .js .rv { opacity: 1; transform: none; transition: none; }
+  }
+</style>
